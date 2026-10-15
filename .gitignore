@@ -1,0 +1,23 @@
+.DS_Store
+.ipynb_checkpoints/
+__pycache__/
+.venv/
+venv/
+.env
+.env.*
+*.pem
+*.key
+*.csv
+*.json
+*.jsonl
+*.parquet
+*.pkl
+*.pickle
+*.npz
+*.npy
+/data/
+/outputs/
+
+# Existing anonymous community-level input for the verified profile comparison.
+!supporting_analysis/core_pipeline/outputs/runs/2prat/09_aggregations/top10/motifs_by_start_comm_attention_top10.csv
+/supporting_analysis/core_pipeline/figures/

@@ -1,0 +1,179 @@
+{
+  "paths": {
+    "raw_json_dir": "covid_19_ita",
+    "edgelist_full_csv": "edgelist_full_final.csv",
+    "edgelist_full_final_csv": "edgelist_full_final.csv",
+    "edgelist_full_baseline_csv": "edgelist_full_final.csv",
+    "edgelist_full_rebuilt_csv": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_full_rebuilt.csv",
+    "edgelist_weighted_csv": "edgelist_weighted.csv",
+    "edgelist_weighted_lwcc_csv": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_weighted_lwcc.csv",
+    "edgelist_verified_unverified_csv": "edgelist_final2.csv",
+    "edgelist_verified_unverified_baseline_csv": "edgelist_final2.csv",
+    "edgelist_verified_unverified_rebuilt_csv": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_vu_legacy.csv",
+    "edgelist_verified_unverified_rebuilt_from_json_csv": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_vu_legacy.csv",
+    "edgelist_vu_legacy_csv": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_vu_legacy.csv",
+    "edgelist_vu_snapshot_csv": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_final_snapshot.csv",
+    "edgelist_vu_audience_only_csv": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_final_audience_only.csv",
+    "row_projection_csv": "core_pipeline/outputs/runs/{run.label}/02_projection/row_projection.csv",
+    "row_nodes_csv": "core_pipeline/outputs/runs/{run.label}/02_projection/row_nodes.csv",
+    "projection_manifest_json": "core_pipeline/outputs/runs/{run.label}/02_projection/projection_manifest.json",
+    "user_snapshot_csv": "core_pipeline/outputs/runs/{run.label}/01_data/covid_users_snapshot3.csv",
+    "row_communities_csv": "row_communities_Leid_2_prat.csv",
+    "propagated_communities_csv": "communities_label_prop_Leid2_prat.csv",
+    "verified_top10_csv": "verified_users_top10_communities_2_prat.csv",
+    "paths_motifs_csv": "paths_motifs_communities_10e7_2prat.csv",
+    "network_stats_csv": "network_properties_output/basic_degree_stats_original_vs_reversed.csv",
+    "tweets_by_community_dir": "tweets_verified_by_community_top10_2prat"
+  },
+  "outputs": {
+    "base_dir": "core_pipeline/outputs",
+    "run_dir": "core_pipeline/outputs/runs/{run.label}",
+    "label_prop_dir": "core_pipeline/outputs/runs/{run.label}/04_label_prop",
+    "manifest_path": "core_pipeline/outputs/runs/{run.label}/manifest_counts.json",
+    "subdirs": [
+      "preflight",
+      "logs",
+      "tables",
+      "figures"
+    ]
+  },
+  "run": {
+    "label": "2prat"
+  },
+  "projection": {
+    "alpha": 0.05,
+    "method": "poisson",
+    "correction": "fdr",
+    "threads": 4
+  },
+  "community": {
+    "main_variant": "leiden_gamma2_rifrullo_run1",
+    "main_run_seed": 1001,
+    "main_selected_seed": 4757033,
+    "main_algo": "leiden",
+    "main_gamma": 2,
+    "main_strategy": "rifrullo"
+  },
+  "random_walk": {
+    "L": 3,
+    "n_trials": 10000000,
+    "seed_base": 123,
+    "discard_immediate_sink": true,
+    "include_sink": true,
+    "weight_col": "weight",
+    "source_col": "user_id_str",
+    "target_col": "retweet_author_id",
+    "top_k": 10,
+    "rw_inputs_dir": "core_pipeline/outputs/runs/{run.label}/07_rw_inputs/top10/",
+    "out_dir": "core_pipeline/outputs/runs/{run.label}/08_random_walks/top10/"
+  },
+  "analysis": {
+    "hubness": {
+      "motifs": [1, 3, 8],
+      "chunksize": 200000,
+      "dry_run_rows": 100000,
+      "prob_to_sink_percentiles": [50, 60],
+      "prob_to_sink_eq1": true,
+      "indegree_percentiles": [80, 90, 95, 99],
+      "input": {
+        "paths": {
+          "attention_csv": "core_pipeline/outputs/runs/{run.label}/08_random_walks/top10/attention/paths_motifs_communities_top10.csv",
+          "reversed_csv": "core_pipeline/outputs/runs/{run.label}/08_random_walks/top10/reversed/paths_motifs_communities_top10.csv"
+        },
+        "edgelist_lwcc_path": "core_pipeline/outputs/runs/{run.label}/01_data/edgelist_weighted_lwcc.csv"
+      },
+      "output": {
+        "dir": "core_pipeline/outputs/runs/{run.label}/11_hub_analysis/top10/"
+      }
+    },
+    "top10_transitions_regen": {
+      "output_dir": "core_pipeline/outputs/runs/{run.label}/09_aggregations_new1"
+    },
+    "null_transition_checks": {
+      "eps": 1e-9,
+      "community_mapping_topk_csv": "core_pipeline/outputs/runs/{run.label}/07_rw_inputs/top{top_k}/lwcc_node_to_comm_top10.csv",
+      "output_dir": "core_pipeline/outputs/runs/{run.label}/12_null_transition_checks/top{top_k}"
+    },
+    "null_transition_checks_v2": {
+      "eps": 1e-12,
+      "community_mapping_topk_csv": "core_pipeline/outputs/runs/{run.label}/07_rw_inputs/top{top_k}/lwcc_node_to_comm_top10.csv",
+      "output_dir": "core_pipeline/outputs/runs/{run.label}/12_null_transition_checks_v2/top{top_k}"
+    },
+    "null_transition_checks_v2b": {
+      "eps": 1e-12,
+      "output_dir": "core_pipeline/outputs/runs/{run.label}/12_null_transition_checks_v2b/top{top_k}"
+    },
+    "connectivity_gravity_interonly_new1": {
+      "eps": 1e-12,
+      "input_base": "core_pipeline/outputs/runs/{run.label}/12_null_transition_checks_v2/top{top_k}",
+      "output_base": "core_pipeline/outputs/runs/{run.label}/11_connectivity_gravity_interonly_new1"
+    }
+  },
+  "expected_counts": {
+    "raw_json_files": 62,
+    "raw_json_first": "coronavirus_2020_02_20.json",
+    "raw_json_last": "coronavirus_2020_04_23.json",
+    "edgelist_full_rows": 2996072,
+    "edgelist_full_nodes": 334633,
+    "edgelist_weighted_rows": 1871534,
+    "edgelist_weighted_nodes": 334633,
+    "edgelist_weighted_weight_sum": 2996072,
+    "edgelist_verified_unverified_rows": 432131,
+    "edgelist_verified_nodes": 2581,
+    "edgelist_unverified_nodes": 149141,
+    "edgelist_verified_unverified_nodes_total": 151692,
+    "wcc_nodes_original": 308243,
+    "wcc_edges_original": 1849151,
+    "row_projection_nodes": 973,
+    "row_projection_top10_id_size": {
+      "0": 99,
+      "1": 90,
+      "3": 84,
+      "2": 84,
+      "4": 81,
+      "5": 72,
+      "6": 62,
+      "7": 59,
+      "8": 54,
+      "9": 50
+    },
+    "propagated_label_nodes": 334633,
+    "propagated_label_top10_id_size": {
+      "3": 87745,
+      "4": 69316,
+      "1": 48860,
+      "0": 39046,
+      "8": 17986,
+      "7": 11308,
+      "5": 11097,
+      "15": 3899,
+      "9": 3536,
+      "11": 2998
+    },
+    "verified_top10_rows": 2018,
+    "paths_rows": 9024986,
+    "paths_motif_counts": {
+      "1": 8224821,
+      "2": 767,
+      "3": 671382,
+      "4": 1396,
+      "5": 138,
+      "6": 1271,
+      "7": 5226,
+      "8": 119985
+    },
+    "tweets_by_community_file_count": 10,
+    "tweets_by_community_rows": {
+      "tweets_verified_comm_0_2prat.csv": 44301,
+      "tweets_verified_comm_12_2prat.csv": 2085,
+      "tweets_verified_comm_1_2prat.csv": 5245,
+      "tweets_verified_comm_3_2prat.csv": 8022,
+      "tweets_verified_comm_4_2prat.csv": 15448,
+      "tweets_verified_comm_5_2prat.csv": 6466,
+      "tweets_verified_comm_6_2prat.csv": 3204,
+      "tweets_verified_comm_7_2prat.csv": 5113,
+      "tweets_verified_comm_8_2prat.csv": 6630,
+      "tweets_verified_comm_9_2prat.csv": 4613
+    }
+  }
+}
